@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITConnect Escalation Matrix</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --text: #0f172a;
+      --muted: #334155;
+      --accent: #0ea5e9;
+      --accent2: #2563eb;
+      --border: #e5e7eb;
+      --note-bg: #fff7ed;
+      --note-border: #fed7aa;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans"; background: var(--bg); color: var(--text); }
+    a { color: #0369a1; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1080px; margin: 30px auto 40px; padding: 0 20px; }
+    .brand-header { display: flex; align-items: center; gap: 16px; padding: 16px 18px; background: linear-gradient(90deg, rgba(14,165,233,0.12), rgba(37,99,235,0.12)); border: 1px solid var(--border); border-radius: 14px; }
+    .brand-header img { height: 48px; width: auto; }
+    .brand-title { display: flex; flex-direction: column; gap: 2px; }
+    .brand-title h1 { margin: 0; font-size: 1.6rem; letter-spacing: 0.2px; }
+    .brand-title .subtitle { color: var(--muted); font-size: 0.95rem; }
+    .card { margin-top: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06); }
+    .tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: #eef2ff; }
+    .tab-btn { flex: 1; min-width: 220px; padding: 14px 16px; text-align: center; cursor: pointer; color: var(--muted); border: none; outline: none; background: transparent; transition: color 0.15s ease, background 0.15s ease; font-weight: 600; letter-spacing: 0.2px; }
+    .tab-btn.active { color: var(--text); background: rgba(14, 165, 233, 0.12); border-bottom: 2px solid var(--accent); }
+    .panel { display: none; padding: 18px; animation: fadeIn 180ms ease-in; }
+    .panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .accordion-item { border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; overflow: hidden; background: #fff; }
+    .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; user-select: none; background: linear-gradient(180deg, #ffffff, #f8fafc); }
+    .accordion-title { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .chevron { width: 18px; height: 18px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform 0.2s ease; margin-right: 4px; }
+    .accordion-item.open .chevron { transform: rotate(45deg); }
+    .accordion-content { display: none; padding: 14px 16px 16px; }
+    .accordion-item.open .accordion-content { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+    th, td { border: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top; font-size: 0.95rem; }
+    th { background: #f1f5f9; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.3px; color: #082f49; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .note { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0 0; padding: 10px 12px; background: var(--note-bg); border: 1px solid var(--note-border); border-radius: 10px; color: #7c2d12; }
+    .note .dot { min-width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); margin-top: 6px; }
+    .note strong { color: #0f172a; }
+    footer { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--muted); margin: 18px 0 0; font-size: 0.85rem; }
+    footer img { height: 20px; width: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-header">
+      <img src="data:image/jpeg;base64,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" alt="ITConnect Logo" />
+      <div class="brand-title">
+        <h1>ITConnect Escalation Matrix</h1>
+        <span class="subtitle">ITConnect • Technical Service Desk • Asset (incl. Vendor & Store) • Onsite/On-Call • Recipe/BOM/ITSM/Remote Tools</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" data-target="#tsd">Technical Service Desk</button>
+        <button class="tab-btn" data-target="#asset">Asset Management</button>
+        <button class="tab-btn" data-target="#onsite">Onsite & On-Call Engineers</button>
+        <button class="tab-btn" data-target="#recipe">Recipe • BOM • ITSM • Remote Tools</button>
+      </div>
+
+      <!-- Technical Service Desk Panel -->
+      <section id="tsd" class="panel active" aria-label="Technical Service Desk">
+        <div class="accordion-item open">
+          <div class="accordion-header" role="button" aria-expanded="true">
+            <div class="accordion-title">
+              <span class="chevron"></span>
+              <span>Technical Service Desk – 🔺 Escalation Matrix</span>
+              <span class="badge">PRIORITY</span>
+            </div>
+          </div>
+          <div class="accordion-content">
+            <table aria-label="TSD Escalation Matrix">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Time</th>
+                  <th>Role</th>
+                  <th>Name</th>
+                  <th>Contact Number</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Level 1</td>
+                  <td>4 hrs</td>
+                  <td>Service Desk Lead</td>
+                  <td>Parvesh Patel</td>
+                  <td><a href="tel:+919773989107">9773989107</a></td>
+                  <td><a href="mailto:tsdlead@pidilite.co.in">tsdlead@pidilite.co.in</a></td>
+                </tr>
+                <tr>
+                  <td>Level 2</td>
+                  <td>8 hrs</td>
+                  <td>Operation Manager</td>
+                  <td>Subrat Sahoo</td>
+                  <td><a href="tel:+918657996242">8657996242</a></td>
+                  <td><a href="mailto:dcooperations@pidilite.co.in">dcooperations@pidilite.co.in</a></td>
+                </tr>
+                <tr>
+                  <td>Level 3</td>
+                  <td>After 12 hrs</td>
+                  <td>Project Manager</td>
+                  <td>Md Tarique Neyaz</td>
+                  <td><a href="tel:+918657015878">8657015878</a></td>
+                  <td><a href="mailto:itoperations@pidilite.co.in">itoperations@pidilite.co.in</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">
+              <span class="dot"></span>
+              <div>
+                <strong>Technical Service Desk – Contact:</strong> Please raise a ticket at <a href="mailto:itconnect@pidilite.com">itconnect@pidilite.com</a> or connect for any support at <a href="tel:+912268837820">Phone: 022-6883 7820</a> / <a href="tel:+912268837825">7825</a>.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Asset Management Panel (includes Vendor & Store) -->
+      <section id="asset" class="panel" aria-label="Asset Management">
+        <!-- Asset Management Escalation Matrix -->
+        <div class="accordion-item open">
+          <div class="accordion-header" role="button" aria-expanded="true">
+            <div class="accordion-title">
+              <span class="chevron"></span>
+              <span>Asset Management – 🔺 Escalation Matrix</span>
+              <span class="badge">PRIORITY</span>
+            </div>
+          </div>
+          <div class="accordion-content">
+            <table aria-label="Asset Management Escalation Matrix">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Time</th>
+                  <th>Contact Person</th>
+                  <th>Designation</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Level 1</td>
+                  <td>After 4 hrs</td>
+                  <td>Subrat Sahoo</td>
+                  <td>Operation Manager</td>
+                  <td><a href="mailto:dcooperations@pidilite.co.in">dcooperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657996242">8657996242</a></td>
+                </tr>
+                <tr>
+                  <td>Level 2</td>
+                  <td>After 8 hrs</td>
+                  <td>Md Tarique Neyaz</td>
+                  <td>Project Manager</td>
+                  <td><a href="mailto:itoperations@pidilite.co.in">itoperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657015878">8657015878</a></td>
+                </tr>
+                <tr>
+                  <td>Level 3</td>
+                  <td>After 12 hrs</td>
+                  <td>Rajendra Kurkute</td>
+                  <td>Assistant Manager</td>
+                  <td><a href="mailto:rajendra.kurkute@pidilite.com">rajendra.kurkute@pidilite.com</a></td>
+                  <td><a href="tel:+917303445511">7303445511</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">
+              <span class="dot"></span>
+              <div>
+                <strong>Asset Management – Contact:</strong> Please raise a ticket at <a href="mailto:itconnect@pidilite.com">itconnect@pidilite.com</a> or connect for any support at <a href="tel:+919833602061">9833602061</a> (Siddhesh Rahate – Asset Manager).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IT Vendor & Asset Store Management (now nested under Asset) -->
+        <div class="accordion-item">
+          <div class="accordion-header" role="button" aria-expanded="false">
+            <div class="accordion-title">
+              <span class="chevron"></span>
+              <span>IT Vendor Management & Asset Store Management – 🔺 Escalation Matrix</span>
+              <span class="badge">PRIORITY</span>
+            </div>
+          </div>
+          <div class="accordion-content">
+            <table aria-label="Vendor & Asset Store Escalation Matrix">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Time</th>
+                  <th>Contact Person</th>
+                  <th>Designation</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Level 1</td>
+                  <td>After 4 hrs</td>
+                  <td>Siddhesh Rahate</td>
+                  <td>Asset Manager</td>
+                  <td><a href="mailto:assetmgmt@pidilite.co.in">assetmgmt@pidilite.co.in</a></td>
+                  <td><a href="tel:+919833602061">9833602061</a></td>
+                </tr>
+                <tr>
+                  <td>Level 2</td>
+                  <td>After 8 hrs</td>
+                  <td>Subrat Sahoo</td>
+                  <td>Operation Manager</td>
+                  <td><a href="mailto:dcooperations@pidilite.co.in">dcooperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657996242">8657996242</a></td>
+                </tr>
+                <tr>
+                  <td>Level 3</td>
+                  <td>After 12 hrs</td>
+                  <td>Md Tarique Neyaz</td>
+                  <td>Project Manager</td>
+                  <td><a href="mailto:itoperations@pidilite.co.in">itoperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657015878">8657015878</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">
+              <span class="dot"></span>
+              <div>
+                <strong>Vendor & Store – Contacts:</strong> Please raise a ticket at <a href="mailto:itconnect@pidilite.com">itconnect@pidilite.com</a> or connect for any support as mentioned below:<br/>
+                • IT Vendor Management: <a href="tel:+918104826165">8104826165</a> (Aniruddh Banavali – IT Vendor Lead)<br/>
+                • IT Store related: <a href="tel:+918828426469">8828426469</a> (Rupesh Bhadwalkar – IT Store Lead)
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Onsite & On-Call Engineers Panel -->
+      <section id="onsite" class="panel" aria-label="Onsite and On Call Engineer Management">
+        <div class="accordion-item open">
+          <div class="accordion-header" role="button" aria-expanded="true">
+            <div class="accordion-title">
+              <span class="chevron"></span>
+              <span>Onsite and On-Call Engineer Management – 🔺 Escalation Matrix</span>
+              <span class="badge">PRIORITY</span>
+            </div>
+          </div>
+          <div class="accordion-content">
+            <table aria-label="Onsite/On-Call Escalation Matrix">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Time</th>
+                  <th>Contact Person</th>
+                  <th>Designation</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>After 4 hrs</td>
+                  <td>Mr. Subrat Sahoo</td>
+                  <td>Operation Manager</td>
+                  <td><a href="mailto:dcooperations@pidilite.co.in">dcooperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657996242">8657996242</a></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>After 8 hrs</td>
+                  <td>Md Tarique Neyaz</td>
+                  <td>Project Manager</td>
+                  <td><a href="mailto:itoperations@pidilite.co.in">itoperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657015878">8657015878</a></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>After 12 hrs</td>
+                  <td>Virendra Pratap Satyanarayan Yadav</td>
+                  <td>Assistant Manager</td>
+                  <td><a href="mailto:yadav.virendra@pidilite.com">yadav.virendra@pidilite.com</a></td>
+                  <td><a href="tel:+919167525050">9167525050</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">
+              <span class="dot"></span>
+              <div>
+                <strong>Onsite & On-Call – Contact:</strong> Please raise a ticket at <a href="mailto:itconnect@pidilite.com">itconnect@pidilite.com</a> or connect for any support at <a href="tel:+918879966980">8879966980</a> (Vijendra Badwania – Desk Lead).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recipe, BOM, ITSM & Remote Tools Panel -->
+      <section id="recipe" class="panel" aria-label="Recipe, BOM, ITSM & Remote Tools">
+        <div class="accordion-item open">
+          <div class="accordion-header" role="button" aria-expanded="true">
+            <div class="accordion-title">
+              <span class="chevron"></span>
+              <span>Recipe, BOM, ITConnect ITSM & Remote Tools – 🔺 Escalation Matrix</span>
+              <span class="badge">PRIORITY</span>
+            </div>
+          </div>
+          <div class="accordion-content">
+            <table aria-label="Recipe/BOM/ITSM/Remote Tools Escalation Matrix">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Time</th>
+                  <th>Contact Person</th>
+                  <th>Designation</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>After 4 hrs</td>
+                  <td>Mr. Subrat Sahoo</td>
+                  <td>Operation Manager</td>
+                  <td><a href="mailto:dcooperations@pidilite.co.in">dcooperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657996242">8657996242</a></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>After 8 hrs</td>
+                  <td>Md Tarique Neyaz</td>
+                  <td>Project Manager</td>
+                  <td><a href="mailto:itoperations@pidilite.co.in">itoperations@pidilite.co.in</a></td>
+                  <td><a href="tel:+918657015878">8657015878</a></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>After 12 hrs</td>
+                  <td>Virendra Pratap Satyanarayan Yadav</td>
+                  <td>Assistant Manager</td>
+                  <td><a href="mailto:yadav.virendra@pidilite.com">yadav.virendra@pidilite.com</a></td>
+                  <td><a href="tel:+919167525050">9167525050</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">
+              <span class="dot"></span>
+              <div>
+                <strong>Recipe/BOM/ITSM/Remote Tools – Contacts:</strong> Please raise a ticket at <a href="mailto:itconnect@pidilite.com">itconnect@pidilite.com</a> or connect for any support as mentioned below:<br/>
+                • Remote Tool & Endpoint Management: <a href="tel:+919545178647">9545178647</a> (Vasant Shah – Patch Admin)<br/>
+                • Recipe/BOM & ITSM Tool Management: <a href="tel:+919082698136">9082698136</a> (Ankit Mishra – IT Store Lead)
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer>
+      <img src="data:image/jpeg;base64,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" alt="ITConnect Logo" />
+      <span>© 2026 ITConnect • Local HTML (works from OneDrive or any folder)</span>
+    </footer>
+  </div>
+
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.panel');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const target = document.querySelector(btn.dataset.target);
+        target.classList.add('active');
+      });
+    });
+    document.querySelectorAll('.accordion-header').forEach(h => {
+      h.addEventListener('click', () => {
+        const item = h.parentElement;
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.accordion-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
+        item.classList.toggle('open', !isOpen);
+      });
+    });
+  </script>
+</body>
+</html>
